@@ -11,12 +11,14 @@
         .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 30px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .container { padding: 20px; max-width: 800px; margin: auto; }
         
+        /* لوحة الإدارة */
         #adminPanel { display: none; background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px; border: 2px solid var(--primary); }
         .input-group { margin-bottom: 15px; text-align: right; }
         .input-group label { display: block; font-size: 0.9rem; font-weight: bold; margin-bottom: 5px; color: #475569; }
         .input-group input, .input-group textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-family: inherit; }
         .btn-save { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1rem; }
         
+        /* تصميم كروت التطبيقات */
         .app-card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
         .app-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
         .app-img { width: 70px; height: 70px; border-radius: 15px; object-fit: cover; border: 1px solid #eee; }
@@ -24,6 +26,7 @@
         .app-code { background: #fff1f2; padding: 4px 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; color: #e11d48; display: inline-block; margin-top: 5px; }
         .app-desc { font-size: 0.9rem; color: #64748b; margin-bottom: 15px; line-height: 1.6; }
         
+        /* حقل الرابط للنسخ */
         .link-box { display: flex; align-items: center; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 8px; gap: 10px; }
         .link-text { flex-grow: 1; font-size: 0.8rem; color: #334155; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; direction: ltr; }
         .btn-copy { background: var(--success); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
@@ -61,24 +64,22 @@
 </div>
 
 <script>
-    [span_3](start_span)// كلمة المرور الجديدة للأمان[span_3](end_span)
-    const ADMIN_KEY = "AboNawaf_Platform_2026";
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
     let fullData = { clients: [], apps: [] };
     let selectedImageBase64 = "";
 
+    // 1. جلب البيانات والتأكد من وجود القوائم الحالية
     async function init() {
         showLoading(true);
         try {
             const res = await fetch(DB_URL);
             const data = await res.json();
             if (data) {
-                fullData.clients = data.clients || [];
+                fullData.clients = data.clients || []; // حفظ قائمة العملاء الحالية
                 fullData.apps = data.apps || [];
             }
             
-            [span_4](start_span)// التحقق من مفتاح المسؤول الجديد[span_4](end_span)
-            if (new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY) {
+            if (new URLSearchParams(window.location.search).get('admin') === '123') {
                 document.getElementById('adminPanel').style.display = 'block';
             }
             renderApps();
@@ -86,8 +87,9 @@
         showLoading(false);
     }
 
+    // 2. عرض التطبيقات في الصفحة
     function renderApps() {
-        const isAdmin = new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
+        const isAdmin = new URLSearchParams(window.location.search).get('admin') === '123';
         const grid = document.getElementById('appsGrid');
         
         if (fullData.apps.length === 0) {
@@ -114,6 +116,7 @@
         `).join('');
     }
 
+    // 3. معاينة الصورة قبل الرفع
     function previewImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -126,16 +129,19 @@
         }
     }
 
+    // 4. الحفظ الآمن (يجلب آخر نسخة ثم يضيف عليها لضمان عدم المسح)
     async function addApp() {
         const name = document.getElementById('appName').value;
         const code = document.getElementById('appCode').value;
         const link = document.getElementById('appLink').value;
         const desc = document.getElementById('appDesc').value;
+
         if (!name || !link || !selectedImageBase64 || !code) {
             return alert("يرجى إكمال البيانات: الاسم، الكود، الرابط، والصورة!");
         }
         
         showLoading(true);
+        // إعادة جلب البيانات للتأكد من وجود قائمة العملاء قبل الحفظ
         const res = await fetch(DB_URL);
         const latestData = await res.json();
         if (latestData) {
@@ -144,13 +150,12 @@
         }
 
         fullData.apps.push({ name, code, link, desc, img: selectedImageBase64 });
-        await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
         
-        // الحفاظ على رابط الإدارة بعد التحديث
-        const currentUrl = new URL(window.location.href);
-        location.href = currentUrl.href;
+        await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
+        location.reload();
     }
 
+    // 5. حذف تطبيق
     async function deleteApp(i) {
         if(confirm("هل أنت متأكد من حذف هذا التطبيق؟")) {
             showLoading(true);
@@ -169,6 +174,5 @@
     
     init();
 </script>
-
 </body>
 </html>

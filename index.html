@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر تطبيقات فولتشر السحابي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #4338ca; --secondary: #6366f1; --bg: #f8fafc; --white: #ffffff; --text: #1e293b; --danger: #ef4444; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); }
+        .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 30px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { padding: 20px; max-width: 700px; margin: auto; }
+        #adminPanel { display: none; background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px; border: 2px solid var(--primary); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: 1 / -1; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: #64748b; }
+        .input-group input, .file-input-wrapper { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; outline: none; }
+        .file-input-wrapper { position: relative; background: #fff; cursor: pointer; text-align: center; color: var(--primary); font-weight: bold; }
+        .file-input-wrapper input[type="file"] { position: absolute; top: 0; left: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+        #imagePreview { display: none; width: 60px; height: 60px; border-radius: 10px; object-fit: cover; margin-top: 10px; border: 1px solid #eee; }
+        .btn-save { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .app-card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 15px; }
+        .app-main { display: flex; align-items: center; gap: 15px; }
+        .app-img { border-radius: 18px; object-fit: cover; background: #f1f5f9; border: 1px solid #eee; flex-shrink: 0; }
+        .app-code-tag { background: #e0e7ff; color: var(--primary); padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+        .btn-action { display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--primary); color: white; text-decoration: none; padding: 12px; border-radius: 12px; font-weight: bold; }
+        .loading { text-align: center; padding: 50px; font-weight: bold; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div id="loading" class="loading"><i class="fas fa-spinner fa-spin"></i> جاري الاتصال بسحابة فولتشر...</div>
+
+<div class="header">
+    <h1><i class="fas fa-cubes"></i> متجر تطبيقات فولتشر</h1>
+    <p>الإصدار السحابي الموحد</p>
+</div>
+
+<div class="container">
+    <div id="adminPanel">
+        <div style="color:var(--primary); margin-bottom:15px;"><b><i class="fas fa-plus-circle"></i> إضافة تطبيق جديد للسحابة</b></div>
+        <div class="form-grid">
+            <div class="input-group full-width"><label>اسم التطبيق</label><input type="text" id="appName"></div>
+            <div class="input-group full-width">
+                <label>أيقونة التطبيق</label>
+                <div class="file-input-wrapper"><i class="fas fa-image"></i> اختر من الاستوديو<input type="file" accept="image/*" onchange="previewImage(this)"></div>
+                <img id="imagePreview">
+            </div>
+            <div class="input-group"><label>كود التحميل</label><input type="text" id="appCode"></div>
+            <div class="input-group"><label>المقاس (مثلاً 70)</label><input type="number" id="appSize" value="70"></div>
+            <div class="input-group full-width"><label>رابط التحميل (APK)</label><input type="text" id="appLink"></div>
+        </div>
+        <button class="btn-save" onclick="addApp()">نشر التطبيق سحابياً</button>
+        <div id="adminList" style="margin-top:20px; border-top:1px solid #eee; padding-top:10px;"></div>
+    </div>
+    <div id="appsGrid"></div>
+</div>
+
+<script>
+    // الرابط السحابي الخاص بك في Firebase
+    const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
+    let fullData = { clients: [], apps: [] };
+    let selectedImageBase64 = "";
+
+    async function init() {
+        showLoading(true);
+        try {
+            const res = await fetch(DB_URL);
+            const data = await res.json();
+            fullData = data || { clients: [], apps: [] };
+            if (!fullData.apps) fullData.apps = [];
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('admin') === '123') {
+                document.getElementById('adminPanel').style.display = 'block';
+                renderAdminList();
+            }
+            renderApps();
+        } catch (e) { console.error("Firebase Error"); }
+        showLoading(false);
+    }
+
+    function renderApps() {
+        const grid = document.getElementById('appsGrid');
+        grid.innerHTML = fullData.apps.map((app, i) => `
+            <div class="app-card">
+                <div class="app-main">
+                    <img src="${app.img}" class="app-img" style="width:${app.size}px; height:${app.size}px;">
+                    <div class="app-info">
+                        <h3 style="margin:0">${app.name}</h3>
+                        ${app.code ? `<span class="app-code-tag">كود: ${app.code}</span>` : ''}
+                    </div>
+                </div>
+                <a href="${app.link}" class="btn-action" target="_blank"><i class="fas fa-download"></i> تحميل مباشر</a>
+            </div>
+        `).join('');
+    }
+
+    function renderAdminList() {
+        const list = document.getElementById('adminList');
+        list.innerHTML = fullData.apps.map((app, i) => `
+            <div style="display:flex; justify-content:space-between; padding:8px; background:#f1f5f9; margin-bottom:5px; border-radius:8px;">
+                <span>${app.name}</span>
+                <button onclick="deleteApp(${i})" style="color:red; border:none; background:none; cursor:pointer;"><i class="fas fa-trash"></i></button>
+            </div>
+        `).join('');
+    }
+
+    async function addApp() {
+        const name = document.getElementById('appName').value;
+        const link = document.getElementById('appLink').value;
+        if (!name || !link || !selectedImageBase64) return alert("أكمل البيانات والصورة!");
+        
+        fullData.apps.push({
+            name, link, 
+            img: selectedImageBase64, 
+            code: document.getElementById('appCode').value,
+            size: document.getElementById('appSize').value
+        });
+        
+        await syncToFirebase();
+        location.reload(); // إعادة تحميل للتحديث
+    }
+
+    async function deleteApp(i) {
+        if (confirm("حذف التطبيق؟")) {
+            fullData.apps.splice(i, 1);
+            await syncToFirebase();
+            location.reload();
+        }
+    }
+
+    async function syncToFirebase() {
+        showLoading(true);
+        await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
+        showLoading(false);
+    }
+
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const maxSize = 150; // تصغير الحجم لتناسب Firebase
+                    let w = img.width, h = img.height;
+                    if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } }
+                    else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
+                    canvas.width = w; canvas.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    selectedImageBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('imagePreview').src = selectedImageBase64;
+                    document.getElementById('imagePreview').style.display = 'block';
+                };
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function showLoading(s) { document.getElementById('loading').style.display = s ? 'block' : 'none'; }
+    init();
+</script>
+</body>
+</html>

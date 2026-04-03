@@ -6,7 +6,7 @@
     <title>متجر تطبيقات فولتشر 🚀</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #4338ca; --accent: #6366f1; --bg: #f8fafc; --white: #ffffff; --text: #1e293b; --success: #10b981; --border: #e2e8f0; }
+        :root { --primary: #4338ca; --accent: #6366f1; --bg: #f8fafc; --white: #ffffff; --text: #1e293b; --success: #10b981; --border: #e2e8f0; --warning: #f59e0b; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); }
         .header { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(67, 56, 202, 0.2); }
         .container { padding: 20px; max-width: 600px; margin: auto; }
@@ -15,68 +15,38 @@
         
         .app-grid { display: flex; flex-direction: column; gap: 25px; margin-top: 20px; }
         
-        /* تصميم البطاقة الأنيق */
         .app-card { 
-            background: var(--white); 
-            border-radius: 28px; 
-            padding: 25px; 
-            position: relative; 
-            border: 1px solid #f1f5f9; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.04); 
-            text-align: center;
-            transition: 0.3s;
+            background: var(--white); border-radius: 28px; padding: 25px; position: relative; 
+            border: 1px solid #f1f5f9; box-shadow: 0 8px 20px rgba(0,0,0,0.04); text-align: center;
         }
-        .app-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
 
         .app-img { width: 100px; height: 100px; border-radius: 22px; object-fit: cover; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 3px solid #fff; }
         .app-name { font-weight: 800; font-size: 1.4rem; color: var(--primary); margin: 0 0 15px 0; display: block; }
         
-        /* تصميم الحقول الأنيقة */
         .info-field { 
-            background: #fdfdfd; 
-            border: 1px solid var(--border); 
-            border-radius: 16px; 
-            padding: 12px 15px; 
-            margin-bottom: 12px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: flex-start; 
-            position: relative;
+            background: #fdfdfd; border: 1px solid var(--border); border-radius: 16px; 
+            padding: 12px 15px; margin-bottom: 12px; display: flex; flex-direction: column; 
+            align-items: flex-start; position: relative;
         }
         .field-label { font-size: 0.75rem; color: #94a3b8; font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
         .field-value { font-size: 0.95rem; font-weight: 700; color: var(--text); word-break: break-all; text-align: right; padding-left: 40px; }
         
         .copy-icon { 
-            position: absolute; 
-            left: 12px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: var(--accent); 
-            cursor: pointer; 
-            padding: 8px;
-            background: #f1f5f9;
-            border-radius: 10px;
-            transition: 0.2s;
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%); 
+            color: var(--accent); cursor: pointer; padding: 8px; background: #f1f5f9; border-radius: 10px;
         }
-        .copy-icon:hover { background: var(--primary); color: white; }
 
-        .app-desc-box { background: #f0f4ff; color: #4338ca; padding: 12px; border-radius: 14px; font-size: 0.85rem; line-height: 1.5; margin-top: 5px; text-align: justify; }
+        .app-desc-box { background: #f0f4ff; color: #4338ca; padding: 12px; border-radius: 14px; font-size: 0.85rem; line-height: 1.5; margin-top: 5px; text-align: justify; width: 100%; box-sizing: border-box; }
         
         .btn-action { 
-            background: var(--primary); 
-            color: white; 
-            padding: 16px; 
-            border-radius: 18px; 
-            text-decoration: none; 
-            font-weight: 800; 
-            display: block; 
-            margin-top: 10px; 
-            box-shadow: 0 6px 15px rgba(67, 56, 202, 0.2);
-            transition: 0.3s;
+            background: var(--primary); color: white; padding: 16px; border-radius: 18px; 
+            text-decoration: none; font-weight: 800; display: block; margin-top: 10px; border: none; cursor: pointer;
         }
-        .btn-action:hover { opacity: 0.9; transform: scale(1.02); }
 
-        .del-btn { position: absolute; top: 15px; left: 15px; background: #fff1f2; color: #ef4444; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 10; }
+        .admin-btns { position: absolute; top: 15px; left: 15px; display: none; gap: 8px; }
+        .admin-btn { width: 35px; height: 35px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .del-btn { background: #fff1f2; color: #ef4444; }
+        .edit-btn { background: #fef3c7; color: #d97706; }
 
         input, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; margin-top: 5px; box-sizing: border-box; }
         .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
@@ -84,10 +54,7 @@
 </head>
 <body>
 
-<div id="loading" class="loading-overlay">
-    <i class="fas fa-spinner fa-spin fa-3x" style="color:var(--primary)"></i>
-    <p style="margin-top:15px; font-weight:bold;">جاري مزامنة المتجر...</p>
-</div>
+<div id="loading" class="loading-overlay"><i class="fas fa-spinner fa-spin fa-3x" style="color:var(--primary)"></i></div>
 
 <div class="header">
     <h1>متجر فولتشر 🚀</h1>
@@ -96,13 +63,15 @@
 
 <div class="container">
     <div id="adminPanel">
-        <h3 style="margin:0 0 15px 0;"><i class="fas fa-plus-circle"></i> إضافة تطبيق جديد</h3>
+        <h3 id="panelTitle"><i class="fas fa-plus-circle"></i> إضافة تطبيق جديد</h3>
+        <input type="hidden" id="editIndex" value="-1">
         <input type="file" id="appImg" accept="image/*" onchange="previewImage(this)">
         <input type="text" id="appName" placeholder="اسم التطبيق">
         <input type="text" id="appCode" placeholder="كود Downloader">
         <input type="text" id="appLink" placeholder="رابط التحميل المباشر">
         <textarea id="appDesc" rows="2" placeholder="وصف مميزات التطبيق"></textarea>
-        <button class="btn-action" onclick="addApp()" style="width:100%; border:none; background:var(--success); cursor:pointer;">حفظ في السحابة</button>
+        <button id="saveBtn" class="btn-action" onclick="saveApp()" style="width:100%; background:var(--success);">حفظ في السحابة</button>
+        <button id="cancelBtn" onclick="resetForm()" style="width:100%; margin-top:10px; display:none; border:none; background:#eee; padding:10px; border-radius:12px; cursor:pointer;">إلغاء التعديل</button>
     </div>
 
     <div id="appGrid" class="app-grid"></div>
@@ -123,9 +92,9 @@
             renderApps();
             if (params.get('admin') === '123') {
                 document.getElementById('adminPanel').style.display = 'block';
-                document.querySelectorAll('.del-btn').forEach(b => b.style.display = 'flex');
+                document.querySelectorAll('.admin-btns').forEach(b => b.style.display = 'flex');
             }
-        } catch (e) { console.error("Error"); }
+        } catch (e) { console.error(e); }
         showLoading(false);
     }
 
@@ -133,27 +102,26 @@
         const grid = document.getElementById('appGrid');
         grid.innerHTML = (fullData.apps || []).map((app, i) => `
             <div class="app-card">
-                <button class="del-btn" onclick="deleteApp(${i})"><i class="fas fa-trash"></i></button>
+                <div class="admin-btns">
+                    <button class="admin-btn edit-btn" onclick="editApp(${i})"><i class="fas fa-edit"></i></button>
+                    <button class="admin-btn del-btn" onclick="deleteApp(${i})"><i class="fas fa-trash"></i></button>
+                </div>
                 <img src="${app.img}" class="app-img">
                 <span class="app-name">${app.name}</span>
-                
                 <div class="info-field">
                     <span class="field-label"><i class="fas fa-key"></i> كود Downloader</span>
                     <span class="field-value" id="c-${i}">${app.code || '----'}</span>
                     <i class="far fa-copy copy-icon" onclick="copyText('c-${i}')"></i>
                 </div>
-
                 <div class="info-field">
                     <span class="field-label"><i class="fas fa-link"></i> رابط التحميل المباشر</span>
                     <span class="field-value" id="l-${i}">${app.link}</span>
                     <i class="far fa-copy copy-icon" onclick="copyText('l-${i}')"></i>
                 </div>
-
                 <div class="info-field">
                     <span class="field-label"><i class="fas fa-info-circle"></i> وصف التطبيق</span>
                     <div class="app-desc-box">${app.desc || 'تطبيق مميز من عائلة فولتشر'}</div>
                 </div>
-
                 <a href="${app.link}" target="_blank" class="btn-action">تحميل الآن <i class="fas fa-download"></i></a>
             </div>
         `).join('');
@@ -167,24 +135,66 @@
         }
     }
 
-    async function addApp() {
+    async function saveApp() {
         const name = document.getElementById('appName').value;
         const link = document.getElementById('appLink').value;
-        if (!name || !link || !selectedImageBase64) return alert("أكمل البيانات!");
+        const index = parseInt(document.getElementById('editIndex').value);
+        
+        if (!name || !link) return alert("أكمل البيانات!");
+        
         showLoading(true);
-        if(!fullData.apps) fullData.apps = [];
-        fullData.apps.push({ name, link, code: document.getElementById('appCode').value, desc: document.getElementById('appDesc').value, img: selectedImageBase64 });
+        const appData = { 
+            name, link, 
+            code: document.getElementById('appCode').value, 
+            desc: document.getElementById('appDesc').value, 
+            img: selectedImageBase64 || (index !== -1 ? fullData.apps[index].img : "")
+        };
+
+        if (!appData.img) { showLoading(false); return alert("يرجى اختيار صورة!"); }
+
+        if (index === -1) fullData.apps.push(appData);
+        else fullData.apps[index] = appData;
+
         await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
         location.reload();
     }
 
+    function editApp(i) {
+        window.scrollTo(0,0);
+        document.getElementById('panelTitle').innerHTML = '<i class="fas fa-edit"></i> تعديل التطبيق';
+        document.getElementById('editIndex').value = i;
+        document.getElementById('appName').value = fullData.apps[i].name;
+        document.getElementById('appCode').value = fullData.apps[i].code;
+        document.getElementById('appLink').value = fullData.apps[i].link;
+        document.getElementById('appDesc').value = fullData.apps[i].desc;
+        document.getElementById('saveBtn').innerText = "تحديث البيانات";
+        document.getElementById('cancelBtn').style.display = "block";
+        selectedImageBase64 = fullData.apps[i].img;
+    }
+
+    function resetForm() {
+        document.getElementById('panelTitle').innerHTML = '<i class="fas fa-plus-circle"></i> إضافة تطبيق جديد';
+        document.getElementById('editIndex').value = "-1";
+        document.getElementById('appName').value = "";
+        document.getElementById('appCode').value = "";
+        document.getElementById('appLink').value = "";
+        document.getElementById('appDesc').value = "";
+        document.getElementById('saveBtn').innerText = "حفظ في السحابة";
+        document.getElementById('cancelBtn').style.display = "none";
+        selectedImageBase64 = "";
+    }
+
     async function deleteApp(i) {
-        if(confirm("حذف؟")) { showLoading(true); fullData.apps.splice(i, 1); await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); location.reload(); }
+        if(confirm("حذف؟")) { 
+            showLoading(true); 
+            fullData.apps.splice(i, 1); 
+            await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); 
+            location.reload(); 
+        }
     }
 
     function copyText(id) {
-        const text = document.getElementById(id).innerText;
-        navigator.clipboard.writeText(text);
+        navigator.clipboard.writeText(document.getElementById(id).innerText);
         alert("تم النسخ بنجاح ✅");
     }
 

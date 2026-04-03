@@ -3,136 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة التطبيقات | عبدالعزيز الفيفي</title>
+    <title>متجر تطبيقات فولتشر السحابي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #4338ca; --success: #10b981; --bg: #f8fafc; --danger: #ef4444; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; direction: rtl; }
+        :root { --primary: #4338ca; --secondary: #6366f1; --bg: #f1f5f9; --white: #ffffff; --text: #1e293b; --success: #10b981; --danger: #ef4444; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); }
+        .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 40px 40px; box-shadow: 0 10px 25px rgba(67, 56, 202, 0.15); }
+        .container { padding: 20px; max-width: 1000px; margin: auto; }
         
-        /* الهيدر */
-        .header { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto 30px; background: white; padding: 15px 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .btn-add { background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        #adminPanel { display: none; background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; border: 1px solid #e2e8f0; }
+        
+        .app-grid { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+        
+        /* تصميم البطاقة المستطيلة */
+        .app-card { 
+            background: var(--white); 
+            border-radius: 20px; 
+            padding: 20px; 
+            position: relative; 
+            border: 1px solid #f1f5f9; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            transition: 0.3s;
+        }
+        .app-card:hover { transform: scale(1.01); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        
+        @media (max-width: 600px) {
+            .app-card { flex-direction: column; text-align: center; }
+            .info-box { flex-direction: column; gap: 10px; }
+        }
 
-        /* شبكة التطبيقات */
-        .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
-        .app-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; position: relative; text-align: center; }
+        .app-img { width: 110px; height: 110px; border-radius: 20px; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid #fff; flex-shrink: 0; }
         
-        /* تصميم الصورة داخل الكرت */
-        .app-img-container { margin-bottom: 15px; display: flex; justify-content: center; align-items: center; }
-        .app-img { border-radius: 15px; object-fit: cover; background: #f1f5f9; }
+        .app-content { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+        .app-name { font-weight: 800; font-size: 1.25rem; color: var(--primary); margin: 0; }
+        .app-desc { font-size: 0.9rem; color: #64748b; margin: 5px 0 10px 0; line-height: 1.5; }
         
-        .app-name { font-size: 1.2rem; font-weight: bold; color: #1e293b; display: block; margin-bottom: 10px; }
-        .dl-box { background: #f1f5f9; border: 2px dashed #cbd5e1; padding: 10px; border-radius: 12px; margin-bottom: 15px; }
-        .dl-num { font-size: 1.4rem; font-weight: bold; color: #e11d48; letter-spacing: 2px; }
+        .data-section { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; }
         
-        .btn-action { width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; text-decoration: none; display: block; margin-top: 10px; font-size: 0.9rem; cursor: pointer; }
-        .btn-dl { background: var(--primary); color: white; border: none; }
-        .btn-edit-app { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; margin-top: 20px; }
+        .info-box { 
+            flex: 1; 
+            min-width: 180px; 
+            background: #f8fafc; 
+            border-radius: 12px; 
+            padding: 8px 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: 1px solid #edf2f7; 
+        }
+        .info-text { display: flex; flex-direction: column; overflow: hidden; }
+        .info-label { font-size: 0.7rem; color: #94a3b8; font-weight: bold; text-transform: uppercase; }
+        .info-value { font-size: 0.95rem; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .copy-btn { background: #fff; border: 1px solid #cbd5e1; color: var(--primary); width: 35px; height: 35px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .copy-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        .btn-open { 
+            background: var(--primary); 
+            color: white; 
+            padding: 15px 25px; 
+            border-radius: 15px; 
+            text-decoration: none; 
+            font-weight: 800; 
+            transition: 0.3s; 
+            white-space: nowrap; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(67, 56, 202, 0.2);
+        }
+        .btn-open:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(67, 56, 202, 0.3); }
+        
+        .del-btn { position: absolute; top: -10px; left: -10px; background: var(--danger); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
 
-        /* المودال (نافذة الإضافة) */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); padding: 20px; }
-        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
-        .form-group { margin-bottom: 15px; text-align: right; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: #475569; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; }
         
-        /* التحكم في حجم الصورة */
-        .size-control { display: flex; align-items: center; gap: 10px; background: #f8fafc; padding: 10px; border-radius: 10px; }
-        
-        .loading { position: fixed; inset: 0; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
-<div id="loading" class="loading"><i class="fas fa-spinner fa-spin fa-3x" style="color:var(--primary)"></i></div>
-
-<div class="header">
-    <h2 style="margin:0; font-size: 1.2rem;"><i class="fas fa-rocket"></i> متجر تطبيقات الفيفي</h2>
-    <button class="btn-add" onclick="openAppModal()"><i class="fas fa-plus-circle"></i> إضافة تطبيق</button>
+<div id="loading" class="loading-overlay">
+    <i class="fas fa-circle-notch fa-spin fa-3x" style="color:var(--primary)"></i>
+    <p style="margin-top:15px; font-weight:bold;">جاري مزامنة بيانات المتجر...</p>
 </div>
 
-<div id="appsList" class="apps-grid">
+<div class="header">
+    <h1>متجر تطبيقات فولتشر 🚀</h1>
+    <p>جميع تطبيقاتك في منصة واحدة وبكل التفاصيل</p>
+</div>
+
+<div class="container">
+    <div id="adminPanel">
+        <h3 style="margin-top:0;"><i class="fas fa-plus-circle"></i> إضافة تطبيق سحابي</h3>
+        <div class="form-group">
+            <label>شعار التطبيق</label>
+            <input type="file" id="appImg" accept="image/*" onchange="previewImage(this)">
+            <center><img id="imagePreview" style="width:80px; height:80px; margin-top:10px; border-radius:15px; display:none; border:2px solid var(--primary)"></center>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+            <div class="form-group"><label>اسم التطبيق</label><input type="text" id="appName" placeholder="مثال: Vulture TV"></div>
+            <div class="form-group"><label>كود التفعيل</label><input type="text" id="appCode" placeholder="اختياري"></div>
+        </div>
+        <div class="form-group"><label>رابط الدخول / التحميل</label><input type="text" id="appLink" placeholder="https://..."></div>
+        <div class="form-group"><label>وصف مختصر للميزات</label><textarea id="appDesc" rows="2"></textarea></div>
+        <button class="btn-open" onclick="addApp()" style="width:100%; border:none; cursor:pointer; background:var(--success);">حفظ في قاعدة البيانات</button>
     </div>
 
-<div id="appModal" class="modal">
-    <div class="modal-content">
-        <h3 id="modalTitle" style="margin-top:0">إضافة تطبيق جديد</h3>
-        <input type="hidden" id="editIndex">
-        
-        <div class="form-group">
-            <label>صورة التطبيق (من الاستوديو)</label>
-            <input type="file" id="in-app-img" accept="image/*" onchange="previewImage(this)">
-            <img id="img-preview" style="width: 50px; height: 50px; margin-top: 10px; border-radius: 10px; display: none; object-fit: cover;">
-        </div>
-
-        <div class="form-group">
-            <label>حجم الصورة (بالبكسل - مثال: 80)</label>
-            <input type="number" id="in-app-size" value="80" placeholder="مثال: 80">
-        </div>
-
-        <div class="form-group">
-            <label>اسم التطبيق</label>
-            <input type="text" id="in-app-name" placeholder="مثال: تطبيق الفيفي برو">
-        </div>
-
-        <div class="form-group">
-            <label>كود Downloader</label>
-            <input type="text" id="in-app-code" placeholder="مثال: 12345">
-        </div>
-
-        <div class="form-group">
-            <label>رابط التحميل المباشر</label>
-            <input type="text" id="in-app-url" placeholder="ضع رابط Dropbox هنا">
-        </div>
-
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button class="btn-add" onclick="saveApp()" style="flex:2">حفظ التطبيق</button>
-            <button onclick="closeAppModal()" style="flex:1; border:none; background:#eee; cursor:pointer; border-radius:10px;">إلغاء</button>
-        </div>
-        <button id="delBtn" class="btn-action" style="background:var(--danger); color:white; border:none; margin-top:10px; display:none;" onclick="deleteApp()">حذف التطبيق نهائياً</button>
-    </div>
+    <div id="appGrid" class="app-grid"></div>
 </div>
 
 <script>
-    // استخدم نفس بيانات السحابة الخاصة بك لتكون الإدارة موحدة
-    const APP_BIN_ID = '69ccd25636566621a86b0b49'; 
-    const API_KEY = '$2a$10$tF3fZ9rbdTzLIljwr83BlOtuLCKngwBUbeK9//NpVH8Mwkfh4GTmu';
-    
-    let allData = { clients: [], apps: [] };
-    let base64Image = "";
+    const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/store_data.json";
+    const params = new URLSearchParams(window.location.search);
+    let fullData = { apps: [] };
+    let selectedImageBase64 = "";
 
-    async function init() {
+    async function loadApps() {
         showLoading(true);
         try {
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${APP_BIN_ID}/latest`, {
-                headers: { 'X-Master-Key': API_KEY }
-            });
-            const data = await res.json();
-            // لضمان عدم مسح بيانات العملاء، نخزنها في كائن واحد
-            allData = data.record.apps ? data.record : { clients: data.record, apps: [] };
+            const response = await fetch(DB_URL);
+            const data = await response.json();
+            if (data && data.apps) fullData.apps = data.apps;
+            
             renderApps();
-        } catch (e) { alert("خطأ في جلب البيانات!"); }
+            if (params.get('admin') === '123') {
+                document.getElementById('adminPanel').style.display = 'block';
+                document.querySelectorAll('.del-btn').forEach(b => b.style.display = 'flex');
+            }
+        } catch (e) { console.error("Error Load"); }
         showLoading(false);
     }
 
     function renderApps() {
-        const list = document.getElementById('appsList');
-        if (!allData.apps || allData.apps.length === 0) {
-            list.innerHTML = "<p style='grid-column:1/-1; color:#94a3b8;'>لا توجد تطبيقات مضافة حالياً.</p>";
-            return;
-        }
-        list.innerHTML = allData.apps.map((app, i) => `
+        const grid = document.getElementById('appGrid');
+        grid.innerHTML = (fullData.apps || []).map((app, i) => `
             <div class="app-card">
-                <div class="app-img-container">
-                    <img src="${app.img}" class="app-img" style="width:${app.size}px; height:${app.size}px;">
+                <button class="del-btn" onclick="deleteApp(${i})"><i class="fas fa-times"></i></button>
+                <img src="${app.img}" class="app-img">
+                <div class="app-content">
+                    <h2 class="app-name">${app.name}</h2>
+                    <p class="app-desc">${app.desc || 'وصف التطبيق غير متوفر حالياً.'}</p>
+                    <div class="data-section">
+                        ${app.code ? `
+                        <div class="info-box">
+                            <div class="info-text"><span class="info-label">كود التفعيل</span><span class="info-value" id="c-${i}">${app.code}</span></div>
+                            <button class="copy-btn" onclick="copyText('c-${i}')"><i class="far fa-copy"></i></button>
+                        </div>` : ''}
+                        <div class="info-box">
+                            <div class="info-text"><span class="info-label">الرابط المباشر</span><span class="info-value" id="l-${i}">${app.link}</span></div>
+                            <button class="copy-btn" onclick="copyText('l-${i}')"><i class="far fa-copy"></i></button>
+                        </div>
+                    </div>
                 </div>
-                <span class="app-name">${app.name}</span>
-                <div class="dl-box">
-                    <small style="display:block; font-size:0.6rem; color:#64748b;">كود Downloader</small>
-                    <span class="dl-num">${app.code}</span>
-                </div>
-                <a href="${app.url}" class="btn-action btn-dl" target="_blank"><i class="fas fa-download"></i> تحميل مباشر APK</a>
-                <button class="btn-action btn-edit-app" onclick="editApp(${i})"><i class="fas fa-edit"></i> تعديل البيانات</button>
+                <a href="${app.link}" target="_blank" class="btn-open">دخول <i class="fas fa-external-link-alt"></i></a>
             </div>
         `).join('');
     }
@@ -140,80 +169,49 @@
     function previewImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                base64Image = e.target.result;
-                document.getElementById('img-preview').src = base64Image;
-                document.getElementById('img-preview').style.display = 'block';
+            reader.onload = e => { 
+                selectedImageBase64 = e.target.result;
+                document.getElementById('imagePreview').src = selectedImageBase64;
+                document.getElementById('imagePreview').style.display = 'block';
             };
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    async function saveApp() {
-        const idx = document.getElementById('editIndex').value;
-        const newApp = {
-            name: document.getElementById('in-app-name').value,
-            code: document.getElementById('in-app-code').value,
-            url: document.getElementById('in-app-url').value,
-            size: document.getElementById('in-app-size').value,
-            img: base64Image || (idx !== "-1" ? allData.apps[idx].img : "")
-        };
-
-        if(!newApp.name || !newApp.img) return alert("يرجى كتابة الاسم واختيار صورة!");
-
+    async function addApp() {
+        const name = document.getElementById('appName').value;
+        const link = document.getElementById('appLink').value;
+        if (!name || !link || !selectedImageBase64) return alert("الاسم، الرابط، والصورة متطلبات أساسية!");
+        
         showLoading(true);
-        if (idx === "-1") allData.apps.push(newApp); else allData.apps[idx] = newApp;
-
-        try {
-            await fetch(`https://api.jsonbin.io/v3/b/${APP_BIN_ID}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
-                body: JSON.stringify(allData)
-            });
-            renderApps();
-            closeAppModal();
-        } catch (e) { alert("فشل الحفظ!"); }
-        showLoading(false);
+        if(!fullData.apps) fullData.apps = [];
+        fullData.apps.push({ 
+            name, link, 
+            code: document.getElementById('appCode').value,
+            desc: document.getElementById('appDesc').value, 
+            img: selectedImageBase64 
+        });
+        await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
+        location.reload();
     }
 
-    function editApp(i) {
-        const app = allData.apps[i];
-        document.getElementById('editIndex').value = i;
-        document.getElementById('in-app-name').value = app.name;
-        document.getElementById('in-app-code').value = app.code;
-        document.getElementById('in-app-url').value = app.url;
-        document.getElementById('in-app-size').value = app.size;
-        document.getElementById('img-preview').src = app.img;
-        document.getElementById('img-preview').style.display = 'block';
-        document.getElementById('modalTitle').innerText = "تعديل تطبيق";
-        document.getElementById('delBtn').style.display = 'block';
-        document.getElementById('appModal').style.display = 'flex';
-    }
-
-    async function deleteApp() {
-        const i = document.getElementById('editIndex').value;
-        if(confirm("هل أنت متأكد من حذف هذا التطبيق؟")) {
-            allData.apps.splice(i, 1);
-            saveApp(); // لإعادة الحفظ بعد الحذف
+    async function deleteApp(i) {
+        if(confirm("حذف التطبيق من المتجر؟")) {
+            showLoading(true);
+            fullData.apps.splice(i, 1);
+            await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
+            location.reload();
         }
     }
 
-    function openAppModal() {
-        document.getElementById('editIndex').value = "-1";
-        document.getElementById('modalTitle').innerText = "إضافة تطبيق جديد";
-        document.getElementById('in-app-name').value = "";
-        document.getElementById('in-app-code').value = "";
-        document.getElementById('in-app-url').value = "";
-        document.getElementById('img-preview').style.display = 'none';
-        document.getElementById('delBtn').style.display = 'none';
-        base64Image = "";
-        document.getElementById('appModal').style.display = 'flex';
+    function copyText(id) {
+        const text = document.getElementById(id).innerText;
+        navigator.clipboard.writeText(text);
+        alert("تم نسخ النص: " + text);
     }
 
-    function closeAppModal() { document.getElementById('appModal').style.display = 'none'; }
     function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
-
-    init();
+    loadApps();
 </script>
 </body>
 </html>

@@ -6,59 +6,69 @@
     <title>متجر تطبيقات فولتشر السحابي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #4338ca; --secondary: #6366f1; --bg: #f8fafc; --white: #ffffff; --text: #1e293b; --success: #10b981; }
+        :root { --primary: #4338ca; --secondary: #6366f1; --bg: #f8fafc; --white: #ffffff; --text: #1e293b; --success: #10b981; --danger: #ef4444; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); }
         .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 30px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .container { padding: 20px; max-width: 800px; margin: auto; }
-        #adminPanel { display: none; background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
-        .app-card { background: var(--white); border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.3s; position: relative; border: 1px solid #f1f5f9; text-decoration: none; color: inherit; }
-        .app-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
-        .app-img { width: 70px; height: 70px; border-radius: 18px; object-fit: cover; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .app-name { font-weight: bold; font-size: 0.9rem; display: block; margin-bottom: 5px; }
-        .app-code { font-size: 0.75rem; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; }
+        .container { padding: 20px; max-width: 900px; margin: auto; }
+        
+        #adminPanel { display: none; background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        
+        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .app-card { background: var(--white); border-radius: 24px; padding: 20px; position: relative; border: 1px solid #f1f5f9; box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.3s; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .app-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.08); }
+        
+        .app-img { width: 90px; height: 90px; border-radius: 22px; object-fit: cover; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid #fff; }
+        .app-name { font-weight: 800; font-size: 1.1rem; color: var(--primary); margin-bottom: 8px; }
+        .app-desc { font-size: 0.85rem; color: #64748b; margin-bottom: 15px; line-height: 1.4; min-height: 40px; }
+        
+        .info-box { width: 100%; background: #f8fafc; border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #edf2f7; }
+        .info-label { font-size: 0.75rem; color: #94a3b8; font-weight: bold; }
+        .info-value { font-size: 0.9rem; font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; }
+        
+        .copy-btn { background: white; border: 1px solid #e2e8f0; color: var(--primary); padding: 5px 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.8rem; }
+        .copy-btn:hover { background: var(--primary); color: white; }
+        
+        .btn-open { width: 100%; background: var(--primary); color: white; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 10px; transition: 0.3s; display: block; }
+        .btn-open:hover { background: var(--secondary); opacity: 0.9; }
+        
+        .del-btn { position: absolute; top: 15px; left: 15px; background: #fff1f2; color: var(--danger); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 5; }
+
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; margin-top: 5px; box-sizing: border-box; font-family: inherit; }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.85rem; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; }
-        .btn { border: none; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; margin-top: 10px; }
-        .del-btn { position: absolute; top: 5px; left: 5px; background: rgba(220,38,38,0.1); color: #dc2626; border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; font-size: 0.7rem; display: none; }
         .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
 <div id="loading" class="loading-overlay">
-    <i class="fas fa-spinner fa-spin fa-2x"></i>
-    <p>جاري تحديث سحابة المتجر...</p>
+    <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i>
+    <p>جاري تحميل المتجر السحابي...</p>
 </div>
 
 <div class="header">
-    <h1>متجر فولتشر 🚀</h1>
-    <p>تطبيقاتك المفضلة في مكان واحد</p>
+    <h1>متجر تطبيقات فولتشر 🚀</h1>
+    <p>بوابتك لتطبيقاتك المفضلة بكل سهولة</p>
 </div>
 
 <div class="container">
     <div id="adminPanel">
-        <h3><i class="fas fa-plus-circle"></i> إضافة تطبيق جديد</h3>
+        <h3><i class="fas fa-plus-circle"></i> إضافة تطبيق للمتجر</h3>
         <div class="form-group">
-            <label>صورة التطبيق</label>
+            <label>أيقونة التطبيق</label>
             <input type="file" id="appImg" accept="image/*" onchange="previewImage(this)">
-            <img id="imagePreview" style="width:60px; height:60px; margin-top:10px; border-radius:10px; display:none;">
+            <center><img id="imagePreview" style="width:70px; height:70px; margin-top:10px; border-radius:15px; display:none; border:2px solid var(--primary)"></center>
         </div>
-        <div class="form-group"><label>اسم التطبيق</label><input type="text" id="appName"></div>
-        <div class="form-group"><label>كود التطبيق</label><input type="text" id="appCode"></div>
-        <div class="form-group"><label>رابط التحميل / الدخول</label><input type="text" id="appLink"></div>
-        <div class="form-group"><label>وصف مختصر</label><textarea id="appDesc"></textarea></div>
-        <button class="btn btn-success" onclick="addApp()">حفظ التطبيق</button>
+        <div class="form-group"><label>اسم التطبيق</label><input type="text" id="appName" placeholder="مثال: فولتشر برو"></div>
+        <div class="form-group"><label>كود التفعيل (اختياري)</label><input type="text" id="appCode" placeholder="كود النسخ للعميل"></div>
+        <div class="form-group"><label>رابط الدخول</label><input type="text" id="appLink" placeholder="https://..."></div>
+        <div class="form-group"><label>وصف التطبيق</label><textarea id="appDesc" rows="2" placeholder="وصف موجز للميزات..."></textarea></div>
+        <button class="btn-open" onclick="addApp()" style="background:var(--success); border:none; cursor:pointer">حفظ في السحابة</button>
     </div>
 
     <div id="appGrid" class="app-grid"></div>
 </div>
 
 <script>
-    // المسار المخصص لبيانات المتجر فقط
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/store_data.json";
     const params = new URLSearchParams(window.location.search);
     let fullData = { apps: [] };
@@ -69,15 +79,14 @@
         try {
             const response = await fetch(DB_URL);
             const data = await response.json();
-            if (data) fullData = data;
+            if (data && data.apps) fullData.apps = data.apps;
             
             renderApps();
-            // تفعيل نمط المسؤول إذا وجد الكود في الرابط
             if (params.get('admin') === '123') {
                 document.getElementById('adminPanel').style.display = 'block';
-                document.querySelectorAll('.del-btn').forEach(b => b.style.display = 'block');
+                document.querySelectorAll('.del-btn').forEach(b => b.style.display = 'flex');
             }
-        } catch (e) { console.error("Error loading data"); }
+        } catch (e) { console.error("Data Load Error"); }
         showLoading(false);
     }
 
@@ -85,12 +94,23 @@
         const grid = document.getElementById('appGrid');
         grid.innerHTML = (fullData.apps || []).map((app, i) => `
             <div class="app-card">
-                <button class="del-btn" onclick="event.preventDefault(); deleteApp(${i})"><i class="fas fa-times"></i></button>
-                <a href="${app.link}" target="_blank" style="text-decoration:none; color:inherit;">
-                    <img src="${app.img}" class="app-img">
-                    <span class="app-name">${app.name}</span>
-                    <span class="app-code">${app.code}</span>
-                </a>
+                <button class="del-btn" onclick="deleteApp(${i})"><i class="fas fa-trash-alt"></i></button>
+                <img src="${app.img}" class="app-img">
+                <span class="app-name">${app.name}</span>
+                <p class="app-desc">${app.desc || 'لا يوجد وصف متاح'}</p>
+                
+                ${app.code ? `
+                <div class="info-box">
+                    <div><span class="info-label">كود التفعيل</span><br><span class="info-value" id="code-${i}">${app.code}</span></div>
+                    <button class="copy-btn" onclick="copyText('code-${i}')"><i class="far fa-copy"></i></button>
+                </div>` : ''}
+
+                <div class="info-box">
+                    <div><span class="info-label">الرابط</span><br><span class="info-value" id="link-${i}">${app.link}</span></div>
+                    <button class="copy-btn" onclick="copyText('link-${i}')"><i class="far fa-copy"></i></button>
+                </div>
+
+                <a href="${app.link}" target="_blank" class="btn-open">دخول للتطبيق</a>
             </div>
         `).join('');
     }
@@ -109,25 +129,35 @@
 
     async function addApp() {
         const name = document.getElementById('appName').value;
-        const code = document.getElementById('appCode').value;
         const link = document.getElementById('appLink').value;
-        const desc = document.getElementById('appDesc').value;
-        if (!name || !link || !selectedImageBase64 || !code) return alert("يرجى ملء الاسم، الكود، الرابط واختيار صورة!");
+        if (!name || !link || !selectedImageBase64) return alert("يرجى إكمال البيانات الأساسية (الاسم، الرابط، الصورة)");
         
         showLoading(true);
         if(!fullData.apps) fullData.apps = [];
-        fullData.apps.push({ name, code, link, desc, img: selectedImageBase64 });
+        fullData.apps.push({ 
+            name, 
+            link, 
+            code: document.getElementById('appCode').value,
+            desc: document.getElementById('appDesc').value, 
+            img: selectedImageBase64 
+        });
         await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
         location.reload();
     }
 
     async function deleteApp(i) {
-        if(confirm("هل تريد حذف هذا التطبيق نهائياً؟")) {
+        if(confirm("سيتم حذف التطبيق نهائياً من السحابة، هل أنت متأكد؟")) {
             showLoading(true);
             fullData.apps.splice(i, 1);
             await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
             location.reload();
         }
+    }
+
+    function copyText(id) {
+        const text = document.getElementById(id).innerText;
+        navigator.clipboard.writeText(text);
+        alert("تم نسخ النص بنجاح: " + text);
     }
 
     function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }

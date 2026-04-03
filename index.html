@@ -3,89 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر Vulture App</title>
+    <title>متجر فولتشر 🚀</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #ff4500; --bg: #121212; --card: #1e1e1e; }
-        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .card { background: var(--card); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #333; }
-        .card img { width: 80px; height: 80px; border-radius: 18px; margin-bottom: 10px; object-fit: cover; }
-        .btn { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-block; }
-        #admin-panel { background: #222; padding: 20px; border-radius: 15px; margin-bottom: 30px; display: none; border: 2px dashed var(--primary); }
-        input { width: 90%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #444; background: #333; color: white; }
+        :root { 
+            --primary: #1e293b; --accent: #334155; --bg: #f1f5f9; --white: #ffffff; 
+            --text: #0f172a; --success: #059669; --border: #e2e8f0; 
+            --num-color: #dc2626; --link-dark: #000080; 
+        }
+        
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.6; }
+        .header { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 40px 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .container { padding: 20px; max-width: 1000px; margin: auto; }
+
+        .admin-box { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 30px; display: none; border: 1px solid var(--border); }
+        .admin-box h3 { margin-top: 0; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1.5px solid var(--border); border-radius: 10px; font-size: 16px; transition: 0.3s; box-sizing: border-box; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.1); }
+        
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.3s; width: 100%; font-size: 16px; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-cancel { background: #94a3b8; margin-top: 10px; }
+
+        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .app-card { background: var(--white); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; position: relative; border: 1px solid var(--border); }
+        .app-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
+        
+        .app-icon { width: 70px; height: 70px; border-radius: 15px; object-fit: cover; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .app-name { font-size: 1.2rem; font-weight: 700; margin: 0 0 5px 0; color: var(--primary); }
+        .app-code { display: inline-block; padding: 4px 12px; background: #fee2e2; color: var(--num-color); border-radius: 20px; font-size: 0.85rem; font-weight: 800; margin-bottom: 10px; cursor: pointer; }
+        .app-desc { font-size: 0.9rem; color: #64748b; margin-bottom: 15px; height: 45px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        
+        .download-btn { display: block; text-align: center; background: var(--link-dark); color: white; text-decoration: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 0.9rem; transition: 0.3s; }
+        .download-btn:hover { background: #0000cd; }
+
+        .admin-actions { position: absolute; top: 10px; left: 10px; display: flex; gap: 5px; }
+        .action-btn { width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: 0.2s; }
+        .edit-btn { background: #e0f2fe; color: #0369a1; }
+        .delete-btn { background: #fee2e2; color: #b91c1c; }
+
+        #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align:center;">Vulture Store 🦅</h1>
-
-    <div id="admin-panel">
-        <h3>إضافة تطبيق جديد للسحابة</h3>
-        <input type="text" id="appName" placeholder="اسم التطبيق">
-        <input type="text" id="appCode" placeholder="كود التطبيق (مثال: V-10)">
-        <input type="text" id="appUrl" placeholder="رابط التحميل">
-        <input type="file" id="appIcon" accept="image/*">
-        <button class="btn" onclick="uploadApp()">نشر في السحابة</button>
-        <p id="status"></p>
+    <div id="loading">
+        <div class="spinner"></div>
+        <p style="margin-top:15px; font-weight:bold;">جاري معالجة البيانات...</p>
     </div>
 
-    <div class="grid" id="appGrid">جاري جلب التطبيقات من السحابة...</div>
+    <div class="header">
+        <h1 style="margin:0; font-size: 2.2rem;">Vulture App Store</h1>
+        <p style="opacity: 0.9; margin-top:10px;">متجرك المتكامل للتطبيقات الحصرية</p>
+    </div>
+
+    <div class="container">
+        <div id="adminPanel" class="admin-box">
+            <h3><i class="fas fa-magic"></i> لوحة التحكم بالسحابة</h3>
+            <input type="hidden" id="editIndex" value="-1">
+            <input type="text" id="appName" placeholder="اسم التطبيق">
+            <input type="text" id="appCode" placeholder="كود التطبيق (سيظهر باللون الأحمر)">
+            <input type="text" id="appLink" placeholder="رابط التحميل المباشر">
+            <textarea id="appDesc" placeholder="وصف قصير للتطبيق..."></textarea>
+            
+            <div style="margin: 10px 0;">
+                <label style="font-weight:bold; display:block; margin-bottom:5px;">أيقونة التطبيق:</label>
+                <input type="file" id="appFile" accept="image/*" style="padding:5px; border:none; background:none;">
+            </div>
+
+            <button id="saveBtn" class="btn" onclick="saveToCloud()">حفظ في السحابة الجديدة</button>
+            <button id="cancelBtn" class="btn btn-cancel" onclick="resetForm()" style="display:none;">إلغاء التعديل</button>
+        </div>
+
+        <div class="app-grid" id="appGrid">
+            </div>
+    </div>
 
     <script>
-        // رابط السحابة الموجه لمجلد التطبيقات فقط
+        // الرابط المحدث لربط المتجر بسحابتك في مجلد apps
         const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/apps.json";
 
-        // التحقق من وضع المسؤول
-        if (new URLSearchParams(window.location.search).get('admin') === '123') {
-            document.getElementById('admin-panel').style.display = 'block';
-        }
+        let fullData = { apps: [] };
+        let selectedImageBase64 = "";
 
-        async function loadApps() {
+        // كشف وضع الإدارة عبر الرابط (?admin=123)
+        const isAdmin = new URLSearchParams(window.location.search).get('admin') === '123';
+        if(isAdmin) document.getElementById('adminPanel').style.display = 'block';
+
+        // قراءة الصورة وتحويلها لـ Base64
+        document.getElementById('appFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => { selectedImageBase64 = event.target.result; };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function loadFromCloud() {
+            showLoading(true);
             try {
-                const res = await fetch(DB_URL);
-                const data = await res.json();
-                const grid = document.getElementById('appGrid');
-                grid.innerHTML = '';
-                if (!data) { grid.innerHTML = 'لا توجد تطبيقات حالياً.'; return; }
-                
-                Object.values(data).forEach(app => {
-                    grid.innerHTML += `
-                        <div class="card">
-                            <img src="${app.icon}" alt="icon">
-                            <div style="font-weight:bold; margin-bottom:5px;">${app.name}</div>
-                            <div style="font-size:12px; color:#aaa; margin-bottom:10px;">${app.code}</div>
-                            <a href="${app.url}" class="btn">تحميل</a>
-                        </div>
-                    `;
-                });
-            } catch (e) { console.error("خطأ في الجلب", e); }
+                const response = await fetch(DB_URL);
+                const data = await response.json();
+                if (data && data.apps) {
+                    fullData = data;
+                } else {
+                    fullData = { apps: [] };
+                }
+                renderApps();
+            } catch (e) {
+                console.error("خطأ في جلب البيانات:", e);
+            }
+            showLoading(false);
         }
 
-        function uploadApp() {
+        function renderApps() {
+            const grid = document.getElementById('appGrid');
+            grid.innerHTML = "";
+            fullData.apps.forEach((app, i) => {
+                const card = document.createElement('div');
+                card.className = "app-card";
+                card.innerHTML = `
+                    ${isAdmin ? `
+                    <div class="admin-actions">
+                        <button class="action-btn edit-btn" onclick="editApp(${i})"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteApp(${i})"><i class="fas fa-trash"></i></button>
+                    </div>` : ''}
+                    <img src="${app.img || 'https://via.placeholder.com/100'}" class="app-icon">
+                    <h2 class="app-name">${app.name}</h2>
+                    <span class="app-code" onclick="copyText('code-${i}')" id="code-${i}">${app.code}</span>
+                    <p class="app-desc">${app.desc}</p>
+                    <a href="${app.link}" target="_blank" class="download-btn"><i class="fas fa-download"></i> تحميل الآن</a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function saveToCloud() {
             const name = document.getElementById('appName').value;
             const code = document.getElementById('appCode').value;
-            const url = document.getElementById('appUrl').value;
-            const file = document.getElementById('appIcon').files[0];
+            const link = document.getElementById('appLink').value;
+            const desc = document.getElementById('appDesc').value;
+            const idx = parseInt(document.getElementById('editIndex').value);
 
-            if (!name || !file) return alert("اكمل البيانات");
+            if(!name || !link) return alert("يرجى إدخال الاسم والرابط على الأقل!");
 
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const appData = { name, code, url, icon: reader.result };
-                document.getElementById('status').innerText = "جاري المزامنة...";
-                
+            showLoading(true);
+            const appObj = { name, code, link, desc, img: selectedImageBase64 };
+
+            if (idx === -1) {
+                fullData.apps.push(appObj);
+            } else {
+                if(!selectedImageBase64) appObj.img = fullData.apps[idx].img;
+                fullData.apps[idx] = appObj;
+            }
+
+            try {
+                // استخدام PUT لحفظ المصفوفة كاملة في مجلد apps
                 await fetch(DB_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(appData)
+                    method: 'PUT',
+                    body: JSON.stringify(fullData)
                 });
-                
-                alert("تم الحفظ بنجاح!");
-                location.reload();
-            };
+                resetForm();
+                loadFromCloud();
+                alert("تمت المزامنة مع السحابة بنجاح ✅");
+            } catch (e) {
+                alert("فشل الربط بالسحابة ❌");
+            }
+            showLoading(false);
         }
 
-        loadApps();
+        function editApp(i) {
+            document.getElementById('editIndex').value = i;
+            document.getElementById('appName').value = fullData.apps[i].name;
+            document.getElementById('appCode').value = fullData.apps[i].code;
+            document.getElementById('appLink').value = fullData.apps[i].link;
+            document.getElementById('appDesc').value = fullData.apps[i].desc;
+            document.getElementById('saveBtn').innerText = "تحديث البيانات";
+            document.getElementById('cancelBtn').style.display = "block";
+            selectedImageBase64 = fullData.apps[i].img;
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function resetForm() {
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('appName').value = "";
+            document.getElementById('appCode').value = "";
+            document.getElementById('appLink').value = "";
+            document.getElementById('appDesc').value = "";
+            document.getElementById('saveBtn').innerText = "حفظ في السحابة الجديدة";
+            document.getElementById('cancelBtn').style.display = "none";
+            document.getElementById('appFile').value = "";
+            selectedImageBase64 = "";
+        }
+
+        async function deleteApp(i) {
+            if(confirm("هل أنت متأكد من حذف هذا التطبيق من السحابة؟")) {
+                showLoading(true);
+                fullData.apps.splice(i, 1);
+                await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
+                loadFromCloud();
+            }
+        }
+
+        function copyText(id) {
+            const text = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(text);
+            alert("تم نسخ الكود: " + text);
+        }
+
+        function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
+
+        // التحميل عند فتح الصفحة
+        loadFromCloud();
     </script>
 </body>
 </html>

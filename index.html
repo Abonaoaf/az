@@ -6,16 +6,16 @@
     <title>متجر تطبيقات فولتشر 🚀</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ألوان مريحة للعين - درجات ملكية هادئة */
         :root { 
-            --primary: #1e293b; /* كحلي داكن مريح */
-            --accent: #334155;  /* رمادي أزرق هادئ */
-            --bg: #f1f5f9;      /* خلفية فاتحة جداً مريحة */
+            --primary: #1e293b; 
+            --accent: #334155;  
+            --bg: #f1f5f9;      
             --white: #ffffff; 
             --text: #0f172a; 
             --success: #059669; 
             --border: #e2e8f0; 
-            --num-color: #dc2626; /* اللون الأحمر للأرقام */
+            --num-color: #dc2626; 
+            --link-dark: #000080; /* لون كحلي غامق جداً للرابط */
         }
         
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); line-height: 1.6; }
@@ -34,22 +34,29 @@
         .app-img { width: 100px; height: 100px; border-radius: 22px; object-fit: cover; margin-bottom: 15px; box-shadow: 0 8px 15px rgba(0,0,0,0.08); border: 3px solid #fff; }
         .app-name { font-weight: 800; font-size: 1.4rem; color: var(--primary); margin: 0 0 15px 0; display: block; }
         
-        /* تصميم الحقول */
         .info-field { 
             background: #f8fafc; border: 1px solid var(--border); border-radius: 16px; 
             padding: 12px 15px; margin-bottom: 12px; display: flex; flex-direction: column; 
             align-items: flex-start; position: relative;
         }
-        .field-label { font-size: 0.8rem; color: #64748b; font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+        .field-label { font-size: 0.85rem; color: #475569; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
         
-        /* تلوين الأرقام باللون الأحمر السميك */
-        .field-value { 
-            font-size: 1.05rem; font-weight: 700; color: var(--text); word-break: break-all; text-align: right; padding-left: 40px; 
-        }
+        /* كود Downloader بالأحمر العريض */
         .field-value.number-highlight {
             color: var(--num-color);
-            font-weight: 900; /* سميك جداً */
+            font-size: 1.1rem;
+            font-weight: 900;
             letter-spacing: 1px;
+        }
+        
+        /* الرابط المباشر بلون غامق وواضح */
+        .field-value.link-highlight {
+            color: var(--link-dark);
+            font-weight: 700;
+            font-size: 0.95rem;
+            word-break: break-all;
+            text-align: right;
+            padding-left: 45px;
         }
         
         .copy-icon { 
@@ -58,7 +65,7 @@
         }
         .copy-icon:hover { background: var(--primary); color: white; }
 
-        .app-desc-box { background: #f1f5f9; color: #475569; padding: 12px; border-radius: 14px; font-size: 0.9rem; margin-top: 5px; text-align: right; width: 100%; box-sizing: border-box; border-right: 4px solid var(--primary); }
+        .app-desc-box { background: #f1f5f9; color: #334155; padding: 12px; border-radius: 14px; font-size: 0.9rem; margin-top: 5px; text-align: right; width: 100%; box-sizing: border-box; border-right: 4px solid var(--primary); }
         
         .btn-action { 
             background: var(--primary); color: white; padding: 16px; border-radius: 18px; 
@@ -81,7 +88,7 @@
 
 <div class="header">
     <h1>متجر تطبيقات فولتشر 🚀</h1>
-    <p>تطبيقاتك المفضلة في واجهة مريحة وأنيقة</p>
+    <p>واجهة عصرية لعرض تطبيقاتك بكل وضوح</p>
 </div>
 
 <div class="container">
@@ -90,7 +97,7 @@
         <input type="hidden" id="editIndex" value="-1">
         <input type="file" id="appImg" accept="image/*" onchange="previewImage(this)">
         <input type="text" id="appName" placeholder="اسم التطبيق">
-        <input type="text" id="appCode" placeholder="كود Downloader (أرقام)">
+        <input type="text" id="appCode" placeholder="كود Downloader">
         <input type="text" id="appLink" placeholder="رابط التحميل المباشر">
         <textarea id="appDesc" rows="2" placeholder="وصف مميزات التطبيق"></textarea>
         <button id="saveBtn" class="btn-action" onclick="saveApp()" style="width:100%; background:var(--success);">حفظ في السحابة</button>
@@ -124,7 +131,6 @@
     function renderApps() {
         const grid = document.getElementById('appGrid');
         grid.innerHTML = (fullData.apps || []).map((app, i) => {
-            // التحقق إذا كان الكود يحتوي على أرقام فقط لتمييزه
             const isNumeric = /^\d+$/.test(app.code);
             return `
             <div class="app-card">
@@ -143,16 +149,16 @@
 
                 <div class="info-field">
                     <span class="field-label"><i class="fas fa-link"></i> رابط التحميل المباشر</span>
-                    <span class="field-value" id="l-${i}" style="font-size:0.85rem; font-weight:normal; color:#64748b;">${app.link}</span>
+                    <span class="field-value link-highlight" id="l-${i}">${app.link}</span>
                     <i class="far fa-copy copy-icon" onclick="copyText('l-${i}')"></i>
                 </div>
 
                 <div class="info-field">
                     <span class="field-label"><i class="fas fa-info-circle"></i> وصف التطبيق</span>
-                    <div class="app-desc-box">${app.desc || 'تطبيق مميز وحصري'}</div>
+                    <div class="app-desc-box">${app.desc || 'تطبيق مميز وحصري من فولتشر'}</div>
                 </div>
 
-                <a href="${app.link}" target="_blank" class="btn-action">تحميل التطبيق <i class="fas fa-download"></i></a>
+                <a href="${app.link}" target="_blank" class="btn-action">تحميل التطبيق الآن <i class="fas fa-download"></i></a>
             </div>
         `}).join('');
     }
@@ -169,7 +175,7 @@
         const name = document.getElementById('appName').value;
         const link = document.getElementById('appLink').value;
         const index = parseInt(document.getElementById('editIndex').value);
-        if (!name || !link) return alert("يرجى ملء الاسم والرابط!");
+        if (!name || !link) return alert("الاسم والرابط ضروريان!");
         
         showLoading(true);
         const appData = { 
@@ -178,7 +184,7 @@
             desc: document.getElementById('appDesc').value, 
             img: selectedImageBase64 || (index !== -1 ? fullData.apps[index].img : "")
         };
-        if (!appData.img) { showLoading(false); return alert("يرجى اختيار صورة!"); }
+        if (!appData.img) { showLoading(false); return alert("اختر صورة!"); }
 
         if (index === -1) fullData.apps.push(appData);
         else fullData.apps[index] = appData;
@@ -189,14 +195,13 @@
 
     function editApp(i) {
         window.scrollTo({top: 0, behavior: 'smooth'});
-        document.getElementById('panelTitle').innerHTML = '<i class="fas fa-edit"></i> تعديل تطبيق';
+        document.getElementById('panelTitle').innerHTML = '<i class="fas fa-edit"></i> تعديل التطبيق';
         document.getElementById('editIndex').value = i;
         document.getElementById('appName').value = fullData.apps[i].name;
         document.getElementById('appCode').value = fullData.apps[i].code;
         document.getElementById('appLink').value = fullData.apps[i].link;
         document.getElementById('appDesc').value = fullData.apps[i].desc;
         document.getElementById('saveBtn').innerText = "تحديث الآن";
-        document.getElementById('saveBtn').style.background = "var(--primary)";
         document.getElementById('cancelBtn').style.display = "block";
         selectedImageBase64 = fullData.apps[i].img;
     }
@@ -209,13 +214,12 @@
         document.getElementById('appLink').value = "";
         document.getElementById('appDesc').value = "";
         document.getElementById('saveBtn').innerText = "حفظ في السحابة";
-        document.getElementById('saveBtn').style.background = "var(--success)";
         document.getElementById('cancelBtn').style.display = "none";
         selectedImageBase64 = "";
     }
 
     async function deleteApp(i) {
-        if(confirm("هل أنت متأكد من الحذف؟")) { 
+        if(confirm("حذف التطبيق؟")) { 
             showLoading(true); 
             fullData.apps.splice(i, 1); 
             await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); 
@@ -225,7 +229,7 @@
 
     function copyText(id) {
         navigator.clipboard.writeText(document.getElementById(id).innerText);
-        alert("تم النسخ ✅");
+        alert("تم النسخ بنجاح ✅");
     }
 
     function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
